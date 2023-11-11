@@ -1,5 +1,6 @@
 package com.luxoft.bankapp.service.demo;
 
-public interface BankInitializationService {
+public interface BankInitializationService
+{
     void createClientsForDemo();
 }

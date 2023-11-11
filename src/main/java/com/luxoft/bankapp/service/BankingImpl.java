@@ -16,12 +16,14 @@ import java.util.Set;
 
 @Service
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class BankingImpl implements Banking {
+public class BankingImpl implements Banking
+{
     @Autowired
     private Storage<Client> storage;
 
     @Override
-    public Client addClient(Client c) {
+    public Client addClient(Client c)
+    {
         Client created = storage.add(c);
         c.setStorage(storage);
 
@@ -29,10 +31,12 @@ public class BankingImpl implements Banking {
     }
 
     @Override
-    public Client getClient(String name) {
+    public Client getClient(String name)
+    {
         Client found = storage.getBy(name);
 
-        if (found != null) {
+        if (found != null)
+        {
             return found;
         }
 
@@ -40,24 +44,29 @@ public class BankingImpl implements Banking {
     }
 
     @Override
-    public Set<Client> getClients() {
+    public Set<Client> getClients()
+    {
         return storage.getAll();
     }
 
     @Override
-    public void removeClient(Client c) {
+    public void removeClient(Client c)
+    {
         storage.remove(c.getId());
     }
 
     @Override
-    public Account createAccount(Client c, Class type) {
+    public Account createAccount(Client c, AccountType type)
+    {
         Account account = null;
         Client client = storage.get(c.getId());
 
-        if (client != null) {
+        if (client != null)
+        {
             account = new SavingAccount(0);
 
-            if (type == CheckingAccount.class) {
+            if (type == AccountType.CHECKING)
+            {
                 account = new CheckingAccount(0);
             }
 
@@ -70,11 +79,13 @@ public class BankingImpl implements Banking {
     }
 
     @Override
-    public void updateAccount(Client c, Account account) {
+    public void updateAccount(Client c, Account account)
+    {
         Client toUpdate = storage.get(c.getId());
 
-        if (toUpdate != null) {
-            toUpdate.removeAccount(account.getClass());
+        if (toUpdate != null)
+        {
+            toUpdate.removeAccount(account.getType());
             toUpdate.addAccount(account);
 
             storage.update(c);
@@ -82,9 +93,12 @@ public class BankingImpl implements Banking {
     }
 
     @Override
-    public Account getAccount(Client c, Class type) {
-        for (Account account : c.getAccounts()) {
-            if (type == account.getClass()) {
+    public Account getAccount(Client c, AccountType type)
+    {
+        for (Account account : c.getAccounts())
+        {
+            if (type == account.getType())
+            {
                 return account;
             }
         }
@@ -93,10 +107,12 @@ public class BankingImpl implements Banking {
     }
 
     @Override
-    public Set<Account> getAllAccounts() {
+    public Set<Account> getAllAccounts()
+    {
         Set<Account> accounts = new HashSet<>();
 
-        for (Client client : storage.getAll()) {
+        for (Client client : storage.getAll())
+        {
             accounts.addAll(client.getAccounts());
         }
 
@@ -104,47 +120,55 @@ public class BankingImpl implements Banking {
     }
 
     @Override
-    public Set<Account> getAllAccounts(Client c) {
+    public Set<Account> getAllAccounts(Client c)
+    {
         return storage.get(c.getId()).getAccounts();
     }
 
     @Override
-    public void removeAccount(Client c, Class type) {
+    public void removeAccount(Client c, AccountType type)
+    {
         Client toUpdate = storage.get(c.getId());
 
-        if (toUpdate != null) {
+        if (toUpdate != null)
+        {
             toUpdate.removeAccount(type);
             storage.update(toUpdate);
         }
     }
 
     @Override
-    public void transferMoney(Client from, Client to, double amount) {
+    public void transferMoney(Client from, Client to, double amount)
+    {
         from.withdraw(amount);
         to.deposit(amount);
     }
 
     @Override
-    public void setStorage(Storage<Client> storage) {
+    public void setStorage(Storage<Client> storage)
+    {
         this.storage = storage;
     }
 
     // TODO feed
-    public void parseFeed(Map<String, String> map) {
+    public void parseFeed(Map<String, String> map)
+    {
         String name = map.get("NAME");
 
         Client client = storage.getBy(name);
 
-        if (client == null) {
+        if (client == null)
+        {
             client = addClient(new Client(name));
         }
 
         client.parseFeed(map);
 
-        Class type = map.get("type").equalsIgnoreCase("SAVING")?SavingAccount.class:CheckingAccount.class;
+        AccountType type = AccountType.valueOf(map.get("type"));
         Account account = client.getAccount(type);
 
-        if (account == null) {
+        if (account == null)
+        {
             account = createAccount(client, type);
         }
 

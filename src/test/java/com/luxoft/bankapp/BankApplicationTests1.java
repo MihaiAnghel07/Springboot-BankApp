@@ -1,9 +1,9 @@
 package com.luxoft.bankapp;
 
 import com.luxoft.bankapp.model.Account;
+import com.luxoft.bankapp.model.AccountType;
 import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
-import com.luxoft.bankapp.model.SavingAccount;
 import com.luxoft.bankapp.service.BankReportService;
 import com.luxoft.bankapp.service.BankReportServiceImpl;
 import com.luxoft.bankapp.service.Banking;
@@ -24,9 +24,10 @@ import java.lang.annotation.Annotation;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = BankApplication.class)
-public class BankApplicationTests1 {
+public class BankApplicationTests1
+{
     private static final String[] CLIENT_NAMES =
-            {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
+            { "Jonny Bravo", "Adam Budzinski", "Anna Smith" };
 
     @Autowired
     private Banking banking;
@@ -44,25 +45,31 @@ public class BankApplicationTests1 {
     private BankInitializationService initializationService;
 
     @Test
-    public void storageBeanConfiguration() {
+    public void storageBeanConfiguration()
+    {
         assertNotNull(storage, "storage bean should be configured");
         assertTrue((storage instanceof ClientStorage), "storage should be instantiated with ClientStorage class");
     }
 
     @Test
-    public void bankingBeanConfiguration() {
+    public void bankingBeanConfiguration()
+    {
         assertNotNull(banking, "banking bean should be configured");
         assertTrue((banking instanceof BankingImpl), "storage should be instantiated with BankingImpl class");
     }
 
     @Test
-    public void bankingBeanAnnotation() {
+    public void bankingBeanAnnotation()
+    {
         Annotation annotation = null;
 
-        try {
+        try
+        {
             annotation = BankingImpl.class.getDeclaredField("storage")
                     .getAnnotation(Autowired.class);
-        } catch (NoSuchFieldException e) {
+        }
+        catch (NoSuchFieldException e)
+        {
             fail("BankingImpl should contains storage field");
         }
 
@@ -70,19 +77,24 @@ public class BankApplicationTests1 {
     }
 
     @Test
-    public void bankReportConfiguration() {
+    public void bankReportConfiguration()
+    {
         assertNotNull(bankReport, "bankReport bean should be configured");
         assertTrue((bankReport instanceof BankReportServiceImpl), "bankReport should be instantiated with BankReportServiceImpl class");
     }
 
     @Test
-    public void bankReportBeanAnnotation() {
+    public void bankReportBeanAnnotation()
+    {
         Annotation annotation = null;
 
-        try {
+        try
+        {
             annotation = BankReportServiceImpl.class.getDeclaredField("storage")
                     .getAnnotation(Autowired.class);
-        } catch (NoSuchFieldException e) {
+        }
+        catch (NoSuchFieldException e)
+        {
             fail("BankingImpl should contains storage field");
         }
 
@@ -90,25 +102,31 @@ public class BankApplicationTests1 {
     }
 
     @Test
-    public void bankFeedServiceConfiguration1() {
+    public void bankFeedServiceConfiguration1()
+    {
         assertNotNull(bankFeedService, "bankFeedService bean should be configured");
         assertTrue((bankFeedService instanceof BankFeedServiceImpl), "bankFeedService should be instantiated with BankFeedServiceImpl class");
     }
 
     @Test
-    public void bankFeedServiceConfiguration2() {
+    public void bankFeedServiceConfiguration2()
+    {
         assertSame(banking, ((BankFeedServiceImpl) bankFeedService).getBanking(),
                 "bankFeedService should use banking bean");
     }
 
     @Test
-    public void bankFeedServiceBeanAnnotation() {
+    public void bankFeedServiceBeanAnnotation()
+    {
         Annotation annotation = null;
 
-        try {
+        try
+        {
             annotation = BankFeedServiceImpl.class.getConstructor(Banking.class)
                     .getAnnotation(Autowired.class);
-        } catch (NoSuchMethodException e) {
+        }
+        catch (NoSuchMethodException e)
+        {
             fail("BankingImpl should contains storage field");
         }
 
@@ -116,20 +134,25 @@ public class BankApplicationTests1 {
     }
 
     @Test
-    public void initializationServiceConfiguration() {
+    public void initializationServiceConfiguration()
+    {
         assertNotNull(initializationService, "initializationService bean should be configured");
         assertTrue((initializationService instanceof DemoBankInitializationService),
                 "initializationService should be instantiated with DemoBankInitializationService class");
     }
 
     @Test
-    public void initializationServiceBeanAnnotation1() {
+    public void initializationServiceBeanAnnotation1()
+    {
         String value = null;
 
-        try {
+        try
+        {
             Annotation annotation = DemoBankInitializationService.class.getAnnotation(Profile.class);
             value = ((Profile) annotation).value()[0];
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e)
+        {
             fail("DemoBankInitializationService should contain Profile annotation");
         }
 
@@ -138,13 +161,17 @@ public class BankApplicationTests1 {
 
 
     @Test
-    public void initializationServiceBeanAnnotation2() {
+    public void initializationServiceBeanAnnotation2()
+    {
         Annotation annotation = null;
 
-        try {
+        try
+        {
             annotation = DemoBankInitializationService.class.getDeclaredField("feedService")
                     .getAnnotation(Autowired.class);
-        } catch (NoSuchFieldException e) {
+        }
+        catch (NoSuchFieldException e)
+        {
             fail("DemoBankInitializationService should contains feedService field");
         }
 
@@ -152,7 +179,8 @@ public class BankApplicationTests1 {
     }
 
     @Test
-    public void initializationClient1() {
+    public void initializationClient1()
+    {
         Client client = banking.getClient(CLIENT_NAMES[0]);
         assertNotNull(client, "banking should have client with name: " + CLIENT_NAMES[0]);
 
@@ -160,32 +188,35 @@ public class BankApplicationTests1 {
     }
 
     @Test
-    public void client1SavingAccount() {
+    public void client1SavingAccount()
+    {
         Client client = banking.getClient(CLIENT_NAMES[0]);
 
-        Account account = client.getAccount(SavingAccount.class);
+        Account account = client.getAccount(AccountType.SAVING);
 
         assertNotNull(account,
-                client.getName() + "should have saving account");
+                client.getName() + "should have " + AccountType.SAVING + " account");
 
         assertEquals(1000, account.getBalance());
     }
 
     @Test
-    public void client1CheckingAccount() {
+    public void client1CheckingAccount()
+    {
         Client client = banking.getClient(CLIENT_NAMES[0]);
 
-        CheckingAccount account = (CheckingAccount) client.getAccount(CheckingAccount.class);
+        CheckingAccount account = (CheckingAccount) client.getAccount(AccountType.CHECKING);
 
         assertNotNull(account,
-                client.getName() + "should have checking account");
+                client.getName() + "should have " + AccountType.CHECKING + " account");
 
         assertEquals(4000, account.getBalance());
         assertEquals(1000, account.getOverdraft());
     }
 
     @Test
-    public void initializationClient2() {
+    public void initializationClient2()
+    {
         Client client = banking.getClient(CLIENT_NAMES[1]);
         assertNotNull(client, "banking should have client with name: " + CLIENT_NAMES[1]);
 
@@ -193,13 +224,14 @@ public class BankApplicationTests1 {
     }
 
     @Test
-    public void client2CheckingAccount() {
+    public void client2CheckingAccount()
+    {
         Client client = banking.getClient(CLIENT_NAMES[1]);
 
-        CheckingAccount account = (CheckingAccount) client.getAccount(CheckingAccount.class);
+        CheckingAccount account = (CheckingAccount) client.getAccount(AccountType.CHECKING);
 
         assertNotNull(account,
-                client.getName() + "should have checking account");
+                client.getName() + "should have " + AccountType.CHECKING + " account");
 
         assertEquals(-500, account.getBalance());
         assertEquals(1500, account.getOverdraft());

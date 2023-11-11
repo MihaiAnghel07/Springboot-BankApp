@@ -4,7 +4,10 @@ import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
 
 import java.util.Map;
 
-public interface Account extends Identifiable {
+public interface Account extends Identifiable
+{
+    AccountType getType();
+
     double getBalance();
 
     void deposit(double amount);

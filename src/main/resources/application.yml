@@ -1,17 +1,21 @@
+
 spring.profiles.active: dev
+feed.filename: demo.feed
 
 ---
 
 spring:
-  profiles: dev
+    profiles: dev
 debug: true
 
 ---
 
 spring:
-  profiles: prod
+    profiles: prod
 debug: false
 
 ---
 
-feed.filename: demo.feed
+audit.amount:
+    deposit: 99
+    withdrawal: 99

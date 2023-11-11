@@ -11,22 +11,25 @@ import java.io.File;
 
 @Service
 @Profile("dev")
-public class DemoBankInitializationService implements BankInitializationService {
-    @Autowired
-    BankFeedServiceImpl feedService;
+public class DemoBankInitializationService implements BankInitializationService
+{
+    public static final String DEMO_FEED_FILE_NAME = "default.feed";
+
     @Value("${feed.filename}")
     private String fileName;
 
-    public static final String DEMO_FEED_FILE_NAME = "default.feed";
-
+    @Autowired
+    private BankFeedServiceImpl feedService;
 
     @Override
     @PostConstruct
-    public void createClientsForDemo() {
-        if (fileName == null) {
+    public void createClientsForDemo()
+    {
+        if (fileName == null)
+        {
             fileName = DEMO_FEED_FILE_NAME;
         }
-        feedService.loadFeed(new File(fileName));
 
+        feedService.loadFeed(new File(fileName));
     }
 }
